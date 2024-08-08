@@ -20,6 +20,8 @@ const Chatbox = () => {
     if (input.trim()) {
       setMessages([...messages, { text: input, sender: "user" }]);
       setInput("");
+
+      // todo GRAB RESPONSE FROM API
       // set response after delay
       setTimeout(() => {
         // temp hard coded message
@@ -28,6 +30,8 @@ const Chatbox = () => {
           { text: "Testing", sender: "other" },
         ]);
       }, 500);
+      // todo
+      
     }
   };
 
