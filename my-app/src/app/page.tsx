@@ -7,7 +7,7 @@ export default function Home() {
       headers: {
         "Content-Type": "application/json"
       },
-      body: JSON.stringify({message: "test post request"})
+      body: JSON.stringify({message: "where are the nonfiction books located?"})
     }
 
     await fetch("/api/genMsg", headers)
