@@ -8,6 +8,21 @@ interface Message {
   text: string;
   sender: "user" | "other";
 }
+const GetResponse = async (messageToSend: String) => {
+  const data = {message: messageToSend}
+  const headers = {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify(data)
+
+  }
+  return await fetch("/api/genMsg", headers)
+  .then(response => response.json())
+  .catch(e => console.log(e)); 
+
+}
 
 const Chatbox = () => {
   const [messages, setMessages] = useState<Message[]>([]);
@@ -22,23 +37,18 @@ const Chatbox = () => {
       setMessages([...messages, userMessage]);
       setInput("");
 
-      try {
-        const response = await fetch("src/app/api/genMsg/route.ts", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ message: input }),
-        });
+      // take response.content 
+      const response = await GetResponse(input)
 
-        const data = await response.json();
-        const aiMessage = { text: data.body.message.content, sender: "other" };
-
-        setMessages((prevMessages) => [...prevMessages, aiMessage]);
-      } catch (error) {
-        console.error("Error fetching the API:", error);
-        // handle error later
+      if(response.success) {
+        const aiResponse = response.body.message.content
+        console.log(aiResponse)
+        setMessages((prevMessages) => [...prevMessages, {text: aiResponse, sender: "other"}]);
+      } else {
+        setMessages((prevMessages) => [...prevMessages, {text: "There was an error with generating our statement", sender: "other"}])
       }
+
+
     }
   };
 
