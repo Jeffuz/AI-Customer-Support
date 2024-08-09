@@ -8,30 +8,46 @@ interface Message {
   text: string;
   sender: "user" | "other";
 }
+const GetResponse = async (messageToSend: String) => {
+  const data = {message: messageToSend}
+  const headers = {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify(data)
+
+  }
+  return await fetch("/api/genMsg", headers)
+  .then(response => response.json())
+  .catch(e => console.log(e)); 
+
+}
 
 const Chatbox = () => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState<string>("");
 
   // Sending message
-  const handleSend = (e: FormEvent) => {
+  const handleSend = async (e: FormEvent) => {
     e.preventDefault();
     // check for no white space
     if (input.trim()) {
       setMessages([...messages, { text: input, sender: "user" }]);
       setInput("");
 
-      // todo GRAB RESPONSE FROM API
-      // set response after delay
-      setTimeout(() => {
-        // temp hard coded message
-        setMessages((prevMessages) => [
-          ...prevMessages,
-          { text: "Testing", sender: "other" },
-        ]);
-      }, 500);
-      // todo
-      
+      // take response.content 
+      const response = await GetResponse(input)
+
+      if(response.success) {
+        const aiResponse = response.body.message.content
+        console.log(aiResponse)
+        setMessages((prevMessages) => [...prevMessages, {text: aiResponse, sender: "other"}]);
+      } else {
+        setMessages((prevMessages) => [...prevMessages, {text: "There was an error with generating our statement", sender: "other"}])
+      }
+
+
     }
   };
 
