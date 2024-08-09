@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, FormEvent, ChangeEvent } from "react";
+import { useState, useRef, useEffect, FormEvent, ChangeEvent } from "react";
 import { FaMountain, FaPaperPlane } from "react-icons/fa";
 
 // Define message object
@@ -8,6 +8,8 @@ interface Message {
   text: string;
   sender: "user" | "other";
 }
+
+
 const GetResponse = async (messageToSend: String) => {
   const data = { message: messageToSend };
   const headers = {
@@ -26,6 +28,13 @@ const Chatbox = () => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState<string>("");
 
+  const scrollRef = useRef(null);
+  
+  useEffect(() => {
+    if (scrollRef !== null)
+      scrollRef.current.scrollIntoView({ behavior: "smooth" });
+  }, [messages])
+
   // Sending message
   const handleSend = async (e: FormEvent) => {
     e.preventDefault();
@@ -40,7 +49,6 @@ const Chatbox = () => {
 
       if (response.success) {
         const aiResponse = response.body.message.content;
-        console.log(aiResponse);
         setMessages((prevMessages) => [
           ...prevMessages,
           { text: aiResponse, sender: "other" },
@@ -70,21 +78,24 @@ const Chatbox = () => {
       {/* Message box */}
       <div className="flex-1 overflow-y-auto p-4 space-y-4">
         {messages.map((msg, index) => (
-          // Messages
-          <div
-            key={index}
-            // w-max: set max width based on child
-            // max-w-75%: max possible width of message
-            className={`flex w-max max-w-[75%] rounded-lg px-3 py-2 text-sm ${
-              // user messages are blue, other is gray
-              msg.sender === "user"
-                ? "ml-auto bg-blue-500 text-white"
-                : "bg-gray-200"
-            }`}
-          >
-            {msg.text}
-          </div>
-        ))}
+              // Messages
+              <div
+                key={index}
+                // w-max: set max width based on child
+                // max-w-75%: max possible width of message
+                className={`flex w-max max-w-[75%] rounded-lg px-3 py-2 text-sm ${
+                  // user messages are blue, other is gray
+                  msg.sender === "user"
+                    ? "ml-auto bg-blue-500 text-white"
+                    : "bg-gray-200"
+                }`}
+              >
+                {msg.text}
+              </div>
+            )
+        )}
+
+        <span ref={scrollRef}/>
       </div>
 
       {/* Submission */}
