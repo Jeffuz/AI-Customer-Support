@@ -14,6 +14,7 @@ export async function POST(request: Request) {
      respond with a short concise message.`}],
      model: "gpt-3.5-turbo"
   })
+  console.log(apiResponse.choices[0].message)
 
   return Response.json({
     success: true,

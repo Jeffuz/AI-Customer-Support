@@ -42,6 +42,7 @@ const Chatbox = () => {
 
       if(response.success) {
         const aiResponse = response.body.message.content
+        console.log(aiResponse)
         setMessages((prevMessages) => [...prevMessages, {text: aiResponse, sender: "other"}]);
       } else {
         setMessages((prevMessages) => [...prevMessages, {text: "There was an error with generating our statement", sender: "other"}])
@@ -52,7 +53,7 @@ const Chatbox = () => {
   };
 
   return (
-    <div className="flex flex-col h-screen rounded-lg bg-gray-50 w-full overflow-scroll">
+    <div className="flex flex-col h-screen rounded-lg bg-gray-50 w-full">
       {/* Header */}
       <div className="flex items-center justify-between bg-blue-600 text-white px-4 py-3">
         <div className="flex items-center gap-2">
