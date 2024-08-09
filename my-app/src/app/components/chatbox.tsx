@@ -9,8 +9,10 @@ interface Message {
   sender: "user" | "other";
 }
 
-
-const GetResponse = async (messageToSend: String) => {
+// Fetching response from gen ai endpoint
+const GetResponse = async (
+  messageToSend: string
+): Promise<{ success: boolean; body?: { message: { content: string } } }> => {
   const data = { message: messageToSend };
   const headers = {
     method: "POST",
@@ -21,38 +23,42 @@ const GetResponse = async (messageToSend: String) => {
   };
   return await fetch("/api/genMsg", headers)
     .then((response) => response.json())
-    .catch((e) => console.log(e));
+    .catch((e) => {
+      console.log(e);
+      return { success: false };
+    });
 };
 
 const Chatbox = () => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState<string>("");
 
-  const scrollRef = useRef(null);
-  
+  // Auto scroll if message overflow
+  const scrollRef = useRef<HTMLSpanElement | null>(null);
   useEffect(() => {
-    if (scrollRef !== null)
+    if (scrollRef.current !== null) {
       scrollRef.current.scrollIntoView({ behavior: "smooth" });
-  }, [messages])
+    }
+  }, [messages]);
 
   // Sending message
   const handleSend = async (e: FormEvent) => {
     e.preventDefault();
-    // check for no white space
+    // Check for no white space
     if (input.trim()) {
-      const userMessage = { text: input, sender: "user" };
+      const userMessage: Message = { text: input, sender: "user" };
       setMessages([...messages, userMessage]);
       setInput("");
 
-      // take response.content
+      // Take response.content
       const response = await GetResponse(input);
 
-      if (response.success) {
-        const aiResponse = response.body.message.content;
-        setMessages((prevMessages) => [
-          ...prevMessages,
-          { text: aiResponse, sender: "other" },
-        ]);
+      if (response.success && response.body) {
+        const aiResponse: Message = {
+          text: response.body.message.content,
+          sender: "other",
+        };
+        setMessages((prevMessages) => [...prevMessages, aiResponse]);
       } else {
         setMessages((prevMessages) => [
           ...prevMessages,
@@ -78,24 +84,23 @@ const Chatbox = () => {
       {/* Message box */}
       <div className="flex-1 overflow-y-auto p-4 space-y-4">
         {messages.map((msg, index) => (
-              // Messages
-              <div
-                key={index}
-                // w-max: set max width based on child
-                // max-w-75%: max possible width of message
-                className={`flex w-max max-w-[75%] rounded-lg px-3 py-2 text-sm ${
-                  // user messages are blue, other is gray
-                  msg.sender === "user"
-                    ? "ml-auto bg-blue-500 text-white"
-                    : "bg-gray-200"
-                }`}
-              >
-                {msg.text}
-              </div>
-            )
-        )}
+          // Messages
+          <div
+            key={index}
+            // w-max: set max width based on child
+            // max-w-75%: max possible width of message
+            className={`flex w-max max-w-[75%] rounded-lg px-3 py-2 text-sm ${
+              // user messages are blue, other is gray
+              msg.sender === "user"
+                ? "ml-auto bg-blue-500 text-white"
+                : "bg-gray-200"
+            }`}
+          >
+            {msg.text}
+          </div>
+        ))}
 
-        <span ref={scrollRef}/>
+        <span ref={scrollRef} />
       </div>
 
       {/* Submission */}
