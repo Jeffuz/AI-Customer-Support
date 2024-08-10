@@ -6,6 +6,8 @@ import * as cheerio from "cheerio";
 // Text Splitting
 import { RecursiveCharacterTextSplitter } from "langchain/text_splitter";
 import { Document } from "langchain/document";
+// Vector Embedding
+import { OpenAIEmbeddings } from "@langchain/openai";
 
 const dataCleanUp = (pageContent: string) => {
   // load html data
@@ -63,14 +65,40 @@ export async function POST(request: Request) {
       chunkOverlap: 50, // # of char that overlap between chunks
     });
 
-    // Split cleaned content into chunks based on init 
+    // Split cleaned content into chunks based on init
     const splitContent = await splitter.splitDocuments([
       new Document({ pageContent: cleanContent }),
     ]);
 
+    // Initalize vector embedding
+    const embeddings = new OpenAIEmbeddings({
+      apiKey: process.env.OPEN_AI_KEY!,
+      model: "text-embedding-3-large",
+    });
+
+    /** 
+     * Create embeddings for each chunk
+     * vectorContent schema:
+      [
+        {
+          "vector": [...],
+          "text": "..."
+        },
+        ...
+      ]
+    */
+    const vectorContent = await Promise.all(
+      // Iteraate through each chunk
+      splitContent.map(async (doc) => {
+        // take a single chunk -> return array of vectors
+        const vectors = await embeddings.embedDocuments([doc.pageContent]);
+        return { vector: vectors[0], text: doc.pageContent };
+      })
+    );
+
     return Response.json({
       message: "Successful",
-      content: splitContent,
+      content: vectorContent,
     });
   } catch (error: any) {
     console.error("Error in POST /api/rag:", error);
