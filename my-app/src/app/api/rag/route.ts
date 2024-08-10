@@ -9,16 +9,17 @@ import { Document } from "langchain/document";
 // Vector Embedding
 import { OpenAIEmbeddings } from "@langchain/openai";
 
+// imports
+import pc from "../../../../utils/pinecone";
+import { v4 as uuidv4 } from "uuid";
+
 const dataCleanUp = (pageContent: string) => {
   // load html data
   const $ = cheerio.load(pageContent);
-
   // remove tags
   $("script, style").remove();
-
   // get clean data
   const cleanedData = $.text();
-
   // remove white space and ascii
   return cleanedData.replace(/[\x00-\x1F\x7F-\x9F]/g, "").trim();
 };
@@ -76,6 +77,9 @@ export async function POST(request: Request) {
       model: "text-embedding-3-large",
     });
 
+    // Call index for pinecone
+    const index = pc.Index("ai-customer-support");
+
     /** 
      * Create embeddings for each chunk
      * vectorContent schema:
@@ -88,11 +92,22 @@ export async function POST(request: Request) {
       ]
     */
     const vectorContent = await Promise.all(
-      // Iteraate through each chunk
+      // Iterate through each chunk
       splitContent.map(async (doc) => {
         // take a single chunk -> return array of vectors
         const vectors = await embeddings.embedDocuments([doc.pageContent]);
-        return { vector: vectors[0], text: doc.pageContent };
+        const uniqueId = uuidv4();
+
+        // Insert into Pinecone
+        await index.upsert([
+          {
+            id: `${uniqueId}`,
+            values: vectors[0],
+            metadata: { text: doc.pageContent },
+          },
+        ]);
+
+        return uniqueId;
       })
     );
 
