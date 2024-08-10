@@ -1,6 +1,11 @@
+// Web Scraping
 import { PuppeteerWebBaseLoader } from "@langchain/community/document_loaders/web/puppeteer";
 import * as puppeteer from "puppeteer";
+// Data Cleaning
 import * as cheerio from "cheerio";
+// Text Splitting
+import { RecursiveCharacterTextSplitter } from "langchain/text_splitter";
+import { Document } from "langchain/document";
 
 const dataCleanUp = (pageContent: string) => {
   // load html data
@@ -52,9 +57,20 @@ export async function POST(request: Request) {
     // Data clean up (remove html keep raw data)
     const cleanContent = dataCleanUp(pageContent);
 
+    // Initialize splitter
+    const splitter = new RecursiveCharacterTextSplitter({
+      chunkSize: 1000, // max length a chunk
+      chunkOverlap: 50, // # of char that overlap between chunks
+    });
+
+    // Split cleaned content into chunks based on init 
+    const splitContent = await splitter.splitDocuments([
+      new Document({ pageContent: cleanContent }),
+    ]);
+
     return Response.json({
-      message: "Scraping successful",
-      content: cleanContent,
+      message: "Successful",
+      content: splitContent,
     });
   } catch (error: any) {
     console.error("Error in POST /api/rag:", error);
