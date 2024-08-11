@@ -12,7 +12,7 @@ interface Message {
 // Fetching response from gen ai endpoint
 const GetResponse = async (
   messageToSend: string
-): Promise<{ success: boolean; body?: { message: { content: string } } }> => {
+): Promise<{ success: boolean; body?: { message: string } }> => {
   const data = { message: messageToSend };
   const headers = {
     method: "POST",
@@ -55,7 +55,7 @@ const Chatbox = () => {
 
       if (response.success && response.body) {
         const aiResponse: Message = {
-          text: response.body.message.content,
+          text: response.body.message,
           sender: "other",
         };
         setMessages((prevMessages) => [...prevMessages, aiResponse]);
@@ -129,3 +129,4 @@ const Chatbox = () => {
 };
 
 export default Chatbox;
+
