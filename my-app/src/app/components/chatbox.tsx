@@ -5,6 +5,8 @@ import { FaMountain, FaPaperPlane } from "react-icons/fa";
 import Modal from "./modal";
 import Ragsubmit from "./ragsubmit";
 import { IoSettingsSharp } from "react-icons/io5";
+import { TaskContext } from "../context/taskContext";
+import { useContext } from "react";
 
 // Define message object
 interface Message {
@@ -14,9 +16,10 @@ interface Message {
 
 // Fetching response from gen ai endpoint
 const GetResponse = async (
-  messageToSend: string
+  messageToSend: string,
+  taskType: string
 ): Promise<{ success: boolean; body?: { message: string } }> => {
-  const data = { message: messageToSend };
+  const data = { message: messageToSend, taskType: taskType };
   const headers = {
     method: "POST",
     headers: {
@@ -37,6 +40,15 @@ const Chatbox = () => {
   const [input, setInput] = useState<string>("");
   const [openModal, setOpenModal] = useState<boolean>(false);
 
+  // states for tasks selection
+  const context = useContext(TaskContext);
+  if (!context) {
+    throw new Error("TaskContext not within provider");
+  }
+
+  const { taskType } = context;
+
+
   // Auto scroll if message overflow
   const scrollRef = useRef<HTMLSpanElement | null>(null);
   useEffect(() => {
@@ -55,7 +67,7 @@ const Chatbox = () => {
       setInput("");
 
       // Take response.content
-      const response = await GetResponse(input);
+      const response = await GetResponse(input, taskType);
 
       if (response.success && response.body) {
         const aiResponse: Message = {

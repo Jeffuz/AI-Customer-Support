@@ -27,11 +27,26 @@ export async function POST(request: Request) {
   try {
     const res = await request.json();
     const userMessage = res["message"];
+    const taskType = res["taskType"];
 
     // Query Pinecone for relevant information
     const pineconeQuery = await queryIndex(userMessage);
 
     let responseMessage = "";
+
+    // modal based on task type
+    let model = "gpt-4o-mini"; // default
+
+    // update when newer models that pertain to task come out
+    if (taskType === "creative_writing") {
+      model = "gpt-4o-mini";
+    } else if (taskType === "technical_documentation") {
+      model = "gpt-4o-mini";
+    } else if (taskType === "customer_support") {
+      model = "gpt-4o-mini";
+    } else if (taskType === "general_knowledge") {
+      model = "gpt-4o-mini";
+    }
 
     // if vector db includes data (meaning user has uploaded link)
     if (pineconeQuery && pineconeQuery.matches.length > 0) {
@@ -45,17 +60,17 @@ export async function POST(request: Request) {
         messages: [
           {
             role: "system",
-            content: `You are a knowledgeable assistant. Use the provided context to help answer the user's question.`,
+            content: `You are a knowledgeable assistant. Use the provided context to help answer the user's question related to ${taskType}.`,
           },
           {
             role: "user",
             content: `Context: ${relevantInfo}\n\nUser Query: ${userMessage}`,
           },
         ],
-        model: "gpt-3.5-turbo",
+        model: model,
       });
 
-      //  response
+      // response
       responseMessage =
         apiResponse.choices[0]?.message?.content ||
         "I'm not sure how to respond to that.";
@@ -65,14 +80,14 @@ export async function POST(request: Request) {
         messages: [
           {
             role: "system",
-            content: `You are a highly capable and informative chatbot. When a user asks a question, your task is to provide the most accurate and concise response possible.`,
+            content: `You are a highly capable and informative chatbot. When a user asks a question related to ${taskType}, your task is to provide the most accurate and concise response possible.`,
           },
           {
             role: "user",
             content: `User Query: "${userMessage}". Please provide a brief and accurate response.`,
           },
         ],
-        model: "gpt-3.5-turbo",
+        model: model,
       });
 
       // response
