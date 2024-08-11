@@ -8,6 +8,7 @@ const Ragsubmit = () => {
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
+    // start loading
     setIsLoading(true);
 
     try {
@@ -25,6 +26,7 @@ const Ragsubmit = () => {
     } catch (error) {
       console.error("Failed to submit URL:", error);
     } finally {
+      // stop loading state
       setIsLoading(false);
     }
   };
@@ -43,10 +45,12 @@ const Ragsubmit = () => {
         searching. Perfect for creating a searchable knowledge base.
       </p>
 
+      {/* Submit url */}
       <form onSubmit={handleSubmit} className="flex flex-col space-y-4">
         <label htmlFor="url" className="text-lg text-gray-600">
           Website URL:
         </label>
+        {/* Url input */}
         <input
           id="url"
           type="url"
@@ -57,6 +61,7 @@ const Ragsubmit = () => {
           required
           disabled={isLoading}
         />
+        {/* Button */}
         <button
           type="submit"
           className={`px-4 py-3 bg-blue-600 text-white font-semibold rounded-lg shadow-md transition duration-200 ${
@@ -64,6 +69,7 @@ const Ragsubmit = () => {
           }`}
           disabled={isLoading}
         >
+          {/* Loading state */}
           {isLoading ? (
             <div className="flex justify-center items-center">
               <svg
