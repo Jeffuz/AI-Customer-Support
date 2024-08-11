@@ -2,6 +2,9 @@
 
 import { useState, useRef, useEffect, FormEvent, ChangeEvent } from "react";
 import { FaMountain, FaPaperPlane } from "react-icons/fa";
+import Modal from "./modal";
+import Ragsubmit from "./ragsubmit";
+import { IoSettingsSharp } from "react-icons/io5";
 
 // Define message object
 interface Message {
@@ -32,6 +35,7 @@ const GetResponse = async (
 const Chatbox = () => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState<string>("");
+  const [openModal, setOpenModal] = useState<boolean>(false);
 
   // Auto scroll if message overflow
   const scrollRef = useRef<HTMLSpanElement | null>(null);
@@ -75,9 +79,21 @@ const Chatbox = () => {
     <div className="flex flex-col h-screen rounded-lg bg-gray-50 w-full">
       {/* Header */}
       <div className="flex items-center justify-between bg-blue-600 text-white px-4 py-3">
-        <div className="flex items-center gap-2">
-          <FaMountain size={24} />
-          <h2 className="text-lg font-medium">AI Customer Support</h2>
+        {/* Logo */}
+        <div className="flex items-center gap-3">
+          <FaMountain size={30} />
+          <h2 className="text-xl font-medium">AI Customer Support</h2>
+        </div>
+        {/* Open Modal for RAG */}
+        <div className="flex items-center p-2">
+          <button onClick={() => setOpenModal(true)}>
+            <IoSettingsSharp size={30} />
+          </button>
+          <Modal open={openModal} onClose={() => setOpenModal(false)}>
+            <div className="px-2 py-6">
+              <Ragsubmit />
+            </div>
+          </Modal>
         </div>
       </div>
 
@@ -129,4 +145,3 @@ const Chatbox = () => {
 };
 
 export default Chatbox;
-

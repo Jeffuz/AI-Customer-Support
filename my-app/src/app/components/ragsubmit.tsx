@@ -28,7 +28,7 @@ const Ragsubmit = () => {
         placeholder="Enter a URL"
         value={url}
         onChange={(e) => setUrl(e.target.value)}
-        className="px-4 py-2 border rounded focus:outline-none"
+        className="px-4 py-2 border rounded focus:outline-none text-black"
         required
       />
       <button
