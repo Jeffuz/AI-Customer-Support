@@ -52,7 +52,7 @@ export async function POST(request: Request) {
             content: `Context: ${relevantInfo}\n\nUser Query: ${userMessage}`,
           },
         ],
-        model: "gpt-3.5-turbo",
+        model: "gpt-4o-mini",
       });
 
       //  response
@@ -72,7 +72,7 @@ export async function POST(request: Request) {
             content: `User Query: "${userMessage}". Please provide a brief and accurate response.`,
           },
         ],
-        model: "gpt-3.5-turbo",
+        model: "gpt-4o-mini",
       });
 
       // response

@@ -4,11 +4,12 @@ import { useState, FormEvent } from "react";
 
 const Ragsubmit = () => {
   const [url, setUrl] = useState<string>("");
+  const [taskType, setTaskType] = useState<string>("general_knowledge"); // default val
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    // start loading
+    // Start loading
     setIsLoading(true);
 
     try {
@@ -17,16 +18,15 @@ const Ragsubmit = () => {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ url }),
+        body: JSON.stringify({ url, taskType }),
       });
 
       const data = await response.json();
-      // console.log(data);
       setUrl("");
     } catch (error) {
       console.error("Failed to submit URL:", error);
     } finally {
-      // stop loading state
+      // Stop loading state
       setIsLoading(false);
     }
   };
@@ -41,12 +41,14 @@ const Ragsubmit = () => {
       {/* Instructions */}
       <p className="text-gray-700 mb-6 text-center">
         Submit a website URL to make it searchable. Our system will analyze and
-        index the content, making it easier to find specific information when
-        searching. Perfect for creating a searchable knowledge base.
+        index the content based on your selected task, making it easier to find
+        specific information when searching. Perfect for creating a searchable
+        knowledge base.
       </p>
 
-      {/* Submit url */}
+      {/* Submit URL and Task */}
       <form onSubmit={handleSubmit} className="flex flex-col space-y-4">
+        {/* Label */}
         <label htmlFor="url" className="text-lg text-gray-600">
           Website URL:
         </label>
@@ -61,6 +63,27 @@ const Ragsubmit = () => {
           required
           disabled={isLoading}
         />
+
+        {/* Label */}
+        <label htmlFor="taskType" className="text-lg text-gray-600">
+          Select Task Type:
+        </label>
+        {/* Drop down to select task */}
+        <select
+          id="taskType"
+          value={taskType}
+          onChange={(e) => setTaskType(e.target.value)}
+          className="px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-black"
+          disabled={isLoading}
+        >
+          <option value="general_knowledge">General Knowledge Questions</option>
+          <option value="creative_writing">Creative Writing</option>
+          <option value="technical_documentation">
+            Technical Documentation
+          </option>
+          <option value="customer_support">Customer Support</option>
+        </select>
+
         {/* Button */}
         <button
           type="submit"
@@ -69,7 +92,7 @@ const Ragsubmit = () => {
           }`}
           disabled={isLoading}
         >
-          {/* Loading state */}
+          {/* Loading State */}
           {isLoading ? (
             <div className="flex justify-center items-center">
               <svg
