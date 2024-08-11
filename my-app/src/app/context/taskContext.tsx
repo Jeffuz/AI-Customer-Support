@@ -1,3 +1,8 @@
-import { createContext } from "react";
+import { createContext} from "react";
 
-export const TaskContext = createContext({});
+interface TaskContextType {
+  taskType: string;
+  setTaskType: any;
+}
+
+export const TaskContext = createContext<TaskContextType | undefined>(undefined);

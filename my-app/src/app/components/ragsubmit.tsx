@@ -1,11 +1,20 @@
 "use client";
 
-import { useState, FormEvent } from "react";
+import { useState, FormEvent, useContext } from "react";
+import { TaskContext } from "../context/taskContext";
 
 const Ragsubmit = () => {
   const [url, setUrl] = useState<string>("");
-  const [taskType, setTaskType] = useState<string>("general_knowledge"); // default val
   const [isLoading, setIsLoading] = useState<boolean>(false);
+
+  // states for tasks selection
+    // states for tasks selection
+    const context = useContext(TaskContext);
+    if (!context) {
+      throw new Error("TaskContext not within provider");
+    }
+  
+    const { taskType, setTaskType } = context;
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -18,10 +27,10 @@ const Ragsubmit = () => {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ url, taskType }),
+        body: JSON.stringify({ url }),
       });
 
-      const data = await response.json();
+      await response.json();
       setUrl("");
     } catch (error) {
       console.error("Failed to submit URL:", error);
