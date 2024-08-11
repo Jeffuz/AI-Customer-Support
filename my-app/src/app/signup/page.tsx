@@ -1,15 +1,19 @@
+"use client";
+
+// Client side Component
+
 import { FaMountain } from "react-icons/fa"
-import { useNavigate } from 'react-router-dom';
+import { useRouter } from 'next/navigation';
 
 // portion to create user data and send over to firebase. This data will then be obtained from sign in
 
-// const navigate = useNavigate();
-const handleClick = () => {
-//   navigate("/SignIn")
-}
-
-
 const Signup = () => {
+
+  const router = useRouter(); // Initialize the useRouter hoo
+  const handleClick = () => {
+    router.push('/signin')
+  }
+
   return (
     <div className="flex flex-col h-screen rounded-lg bg-gray-50 w-full">
     {/* Header */}
@@ -49,7 +53,8 @@ const Signup = () => {
             <div>
               <button
               type = "button"
-              className = "block text-blue-700 text-sm">Create Account </button>
+              onClick = {handleClick}
+              className = "block text-blue-700 text-sm">or Sign In </button>
             </div>
           </form>
         </div>
