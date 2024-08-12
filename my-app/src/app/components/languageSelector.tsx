@@ -15,17 +15,17 @@ export default function LanguageSelector({selectedLanguage, setSelectedLanguage}
   return(
     <div onMouseLeave={() => setIsActive(false)}>
       <button id="dropdownDefaultButton" data-dropdown-toggle="dropdown" onClick={() => setIsActive(!isActive)}
-        class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none
+        className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none
        focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex 
         items-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" type="button">
         <FaLanguage size={25} />
       </button>
 
       {isActive ? (      
-      <div id="dropdown" class="fixed translate-x-[-60%] first-line:z-10 bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700">
-        <ul class="py-2 text-center text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownDefaultButton">
+      <div id="dropdown" className="fixed translate-x-[-60%] first-line:z-10 bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700">
+        <ul className="py-2 text-center text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownDefaultButton">
           <li onClick={() => handleSelect("English")} className="flex justify-around px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
-            <h3 class="">English</h3>
+            <h3 className="">English</h3>
             {selectedLanguage === "English" ? <PiCheckFat/> : null}
           </li>
           <li onClick={() => handleSelect("Chinese")} className="flex justify-around px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
