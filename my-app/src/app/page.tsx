@@ -8,9 +8,12 @@ export default function Home() {
   // Task states for modal
   const [taskType, setTaskType] = useState<string>("general_knowledge"); // default task
 
+
   return (
     <TaskContext.Provider value={{ taskType, setTaskType }}>
+
       <Chatbox />
-    </TaskContext.Provider>
+
+    </TaskContext.Provider>  
   );
 }

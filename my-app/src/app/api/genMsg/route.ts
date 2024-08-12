@@ -28,6 +28,7 @@ export async function POST(request: Request) {
     const res = await request.json();
     const userMessage = res["message"];
     const taskType = res["taskType"];
+    const language = res["language"];
 
     // Query Pinecone for relevant information
     const pineconeQuery = await queryIndex(userMessage);
@@ -60,7 +61,7 @@ export async function POST(request: Request) {
         messages: [
           {
             role: "system",
-            content: `You are a knowledgeable assistant. Use the provided context to help answer the user's question related to ${taskType}.`,
+            content: `You are a knowledgeable assistant speaking ${language}. Use the provided context to help answer the user's question related to ${taskType}. Respond only in ${language}.`,
           },
           {
             role: "user",

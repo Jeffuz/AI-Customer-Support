@@ -7,6 +7,7 @@ import Ragsubmit from "./ragsubmit";
 import { IoSettingsSharp } from "react-icons/io5";
 import { TaskContext } from "../context/taskContext";
 import { useContext } from "react";
+import LanguageSelector from './languageSelector';
 
 // Define message object
 interface Message {
@@ -17,9 +18,10 @@ interface Message {
 // Fetching response from gen ai endpoint
 const GetResponse = async (
   messageToSend: string,
-  taskType: string
+  taskType: string,
+  language: string
 ): Promise<{ success: boolean; body?: { message: string } }> => {
-  const data = { message: messageToSend, taskType: taskType };
+  const data = { message: messageToSend, taskType: taskType, language: language };
   const headers = {
     method: "POST",
     headers: {
@@ -39,7 +41,7 @@ const Chatbox = () => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState<string>("");
   const [openModal, setOpenModal] = useState<boolean>(false);
-
+  const [selectedLanguage, setSelectedLanguage] = useState("English")
   // states for tasks selection
   const context = useContext(TaskContext);
   if (!context) {
@@ -67,7 +69,7 @@ const Chatbox = () => {
       setInput("");
 
       // Take response.content
-      const response = await GetResponse(input, taskType);
+      const response = await GetResponse(input, taskType, selectedLanguage);
 
       if (response.success && response.body) {
         const aiResponse: Message = {
@@ -96,17 +98,25 @@ const Chatbox = () => {
           <FaMountain size={30} />
           <h2 className="text-xl font-medium">AI Customer Support</h2>
         </div>
-        {/* Open Modal for RAG */}
-        <div className="flex items-center p-2">
-          <button onClick={() => setOpenModal(true)}>
-            <IoSettingsSharp size={30} />
-          </button>
-          <Modal open={openModal} onClose={() => setOpenModal(false)}>
-            <div className="px-2 py-6">
-              <Ragsubmit />
+        <div className="inline-flex">
+          <LanguageSelector 
+            selectedLanguage={selectedLanguage} 
+            setSelectedLanguage={setSelectedLanguage}
+          />
+          {/* Open Modal for RAG */}
+          <div className="flex items-center p-2">
+              <button onClick={() => setOpenModal(true)}>
+                <IoSettingsSharp size={30} />
+              </button>
+              <Modal open={openModal} onClose={() => setOpenModal(false)}>
+                <div className="px-2 py-6">
+                  <Ragsubmit />
+                </div>
+              </Modal>
             </div>
-          </Modal>
-        </div>
+          </div>
+
+
       </div>
 
       {/* Message box */}
