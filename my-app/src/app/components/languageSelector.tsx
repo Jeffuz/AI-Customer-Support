@@ -7,7 +7,6 @@ export default function LanguageSelector({selectedLanguage, setSelectedLanguage}
   const [isActive, setIsActive] = useState(false)
 
   const handleSelect = (val:string) => {
-    console.log(val)
     setSelectedLanguage(val)
     setIsActive(false)
   }
